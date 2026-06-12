@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% block title %}Dashboard - Batik GLCM Classifier{% endblock %}
+
+{% block content %}
+<div class="header">
+    <div class="header-left">
+        <h1>Dashboard</h1>
+        <p class="header-subtitle">Klasifikasi Motif Batik Nusantara berbasis Gray Level Co-occurrence Matrix (GLCM)</p>
+    </div>
+</div>
+
+<div class="content-wrapper">
+    <div class="page-header" style="grid-column: 1 / -1;">
+        <div class="stats-row">
+            <div class="stat-card primary">
+                <div class="stat-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="3" width="18" height="18" rx="2"/>
+                        <circle cx="8.5" cy="8.5" r="1.5"/>
+                        <path d="M21 15l-5-5L5 21"/>
+                    </svg>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-label">Jumlah Kelas Motif</div>
+                    <div class="stat-value">{{ stats.n_classes }}</div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 11.08V12a10 10 0 11-5.93-9.14"/>
+                        <polyline points="22 4 12 14.01 9 11.01"/>
+                    </svg>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-label">Data Latih (Train)</div>
+                    <div class="stat-value">{{ stats.n_train }}</div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 12l2 2 4-4"/>
+                        <circle cx="12" cy="12" r="10"/>
+                    </svg>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-label">Data Uji (Test)</div>
+                    <div class="stat-value">{{ stats.n_test }}</div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
+                        <polyline points="17 6 23 6 23 12"/>
+                    </svg>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-label">Akurasi Model (SVM)</div>
+                    <div class="stat-value">{{ stats.accuracy }}%</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="content-left" style="grid-column: 1 / -1;">
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">Tentang Sistem</h2>
+            </div>
+            <div class="about-card">
+                <p>
+                    Sistem ini menerapkan metode <strong>Gray Level Co-occurrence Matrix (GLCM)</strong>
+                    untuk mengekstraksi fitur tekstur dari citra digital motif batik nusantara, kemudian
+                    mengklasifikasikannya menggunakan model <strong>Support Vector Machine (SVM)</strong>.
+                    Dataset yang digunakan terdiri dari {{ stats.n_classes }} kelas motif batik dari berbagai
+                    daerah di Indonesia.
+                </p>
+                <p>
+                    Silakan buka menu <strong>Klasifikasi Batik</strong> untuk mengunggah gambar batik dan
+                    melihat hasil ekstraksi fitur GLCM beserta prediksi motifnya.
+                </p>
+            </div>
+        </div>
+
+        <div class="card" style="margin-top: 20px;">
+            <div class="card-header">
+                <h2 class="card-title">Galeri Motif Batik dalam Dataset</h2>
+            </div>
+            <div class="gallery-grid">
+                {% for s in samples %}
+                <div class="gallery-item">
+                    <img src="{{ s.img }}" alt="{{ s.pretty }}" loading="lazy">
+                    <div class="gallery-caption">
+                        <strong>{{ s.pretty }}</strong>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

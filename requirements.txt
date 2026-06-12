@@ -1,0 +1,7 @@
+Flask==3.0.0
+numpy
+scikit-image
+scikit-learn
+joblib
+Pillow
+matplotlib

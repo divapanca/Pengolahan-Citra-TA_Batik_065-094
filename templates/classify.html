@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+{% block title %}Klasifikasi Batik - Batik GLCM Classifier{% endblock %}
+
+{% block content %}
+<div class="header">
+    <div class="header-left">
+        <h1>Klasifikasi Motif Batik</h1>
+        <p class="header-subtitle">Unggah gambar batik untuk diekstraksi fitur GLCM dan diprediksi motifnya</p>
+    </div>
+</div>
+
+<div class="content-wrapper">
+    <div class="content-left" style="grid-column: 1 / -1;">
+
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">Unggah Gambar</h2>
+            </div>
+
+            <form id="uploadForm">
+                <div class="upload-area" id="uploadArea">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+                        <polyline points="17 8 12 3 7 8"/>
+                        <line x1="12" y1="3" x2="12" y2="15"/>
+                    </svg>
+                    <p><strong>Klik untuk memilih gambar</strong> atau seret &amp; lepas di sini</p>
+                    <div class="upload-hint">Format: JPG, JPEG, PNG, BMP &middot; Maks. 8MB</div>
+                    <input type="file" id="fileInput" name="image" accept=".jpg,.jpeg,.png,.bmp">
+                </div>
+
+                <div class="action-row">
+                    <button type="submit" class="btn primary" id="analyzeBtn" disabled>Analisis Gambar</button>
+                    <button type="button" class="btn" id="resetBtn">Reset</button>
+                </div>
+            </form>
+
+            <div id="spinner" class="spinner hidden"></div>
+            <div id="errorBox" class="error-box hidden"></div>
+        </div>
+
+        <div id="resultSection" class="hidden">
+
+            <div class="card" style="margin-top: 20px;">
+                <div class="card-header">
+                    <h2 class="card-title">Hasil Prediksi</h2>
+                </div>
+
+                <div class="prediction-box">
+                    <div>Motif Batik Terdeteksi</div>
+                    <div class="pred-label" id="predLabel">-</div>
+                    <div class="pred-confidence" id="predConfidence">-</div>
+                </div>
+
+                <div class="result-grid">
+                    <div>
+                        <h3 style="margin-bottom: 10px;">Pra-pemrosesan Citra</h3>
+                        <div class="image-trio">
+                            <figure>
+                                <img id="imgOriginal" src="" alt="Citra asli">
+                                <figcaption>Citra Asli</figcaption>
+                            </figure>
+                            <figure>
+                                <img id="imgGray" src="" alt="Citra grayscale">
+                                <figcaption>Grayscale</figcaption>
+                            </figure>
+                            <figure>
+                                <img id="imgQuant" src="" alt="Citra kuantisasi">
+                                <figcaption>Kuantisasi 32 Level</figcaption>
+                            </figure>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 style="margin-bottom: 10px;">Top-5 Prediksi</h3>
+                        <div class="top5-list" id="top5List"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card" style="margin-top: 20px;">
+                <div class="card-header">
+                    <h2 class="card-title">Fitur GLCM yang Diekstraksi</h2>
+                </div>
+                <p style="color: var(--text-secondary); margin-bottom: 12px; font-size: 14px;">
+                    Nilai rata-rata setiap properti GLCM (jarak 1, 2, 3 piksel) untuk masing-masing arah sudut.
+                </p>
+                <div class="glcm-table-wrap">
+                    <table class="glcm-table">
+                        <thead>
+                            <tr>
+                                <th>Properti</th>
+                                <th class="numeric">Rata-rata</th>
+                                <th class="numeric">0&deg;</th>
+                                <th class="numeric">45&deg;</th>
+                                <th class="numeric">90&deg;</th>
+                                <th class="numeric">135&deg;</th>
+                            </tr>
+                        </thead>
+                        <tbody id="glcmTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/batik-classify.js') }}"></script>
+{% endblock %}

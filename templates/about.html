@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block title %}Tentang Metode - Batik GLCM Classifier{% endblock %}
+
+{% block content %}
+<div class="header">
+    <div class="header-left">
+        <h1>Tentang Metode</h1>
+        <p class="header-subtitle">Penjelasan singkat mengenai Gray Level Co-occurrence Matrix (GLCM) dan SVM</p>
+    </div>
+</div>
+
+<div class="content-wrapper">
+    <div class="content-left" style="grid-column: 1 / -1;">
+        <div class="card">
+            <div class="about-card">
+                <h2>1. Gray Level Co-occurrence Matrix (GLCM)</h2>
+                <p>
+                    GLCM adalah matriks statistik orde dua yang menggambarkan seberapa sering pasangan
+                    nilai keabuan piksel muncul bersama pada jarak <em>d</em> dan sudut &theta; tertentu
+                    dalam sebuah citra. GLCM digunakan untuk mengekstraksi informasi tekstur dari citra,
+                    yang sangat berguna untuk membedakan motif batik dengan pola tekstur berbeda.
+                </p>
+
+                <h2>2. Tahapan Pra-pemrosesan</h2>
+                <ol>
+                    <li>Citra diubah menjadi <strong>grayscale</strong> (skala keabuan).</li>
+                    <li>Citra di-<em>resize</em> menjadi {{ meta.img_size[0] }}x{{ meta.img_size[1] }} piksel.</li>
+                    <li>Nilai keabuan dikuantisasi menjadi {{ meta.levels }} level untuk mengurangi
+                        kompleksitas komputasi GLCM.</li>
+                </ol>
+
+                <h2>3. Parameter GLCM yang Digunakan</h2>
+                <ul>
+                    <li><strong>Jarak (distance):</strong> {{ meta.distances|join(', ') }} piksel</li>
+                    <li><strong>Sudut (angle):</strong> 0&deg;, 45&deg;, 90&deg;, 135&deg;</li>
+                    <li><strong>Level keabuan:</strong> {{ meta.levels }}</li>
+                </ul>
+
+                <h2>4. Fitur Tekstur (Properti GLCM)</h2>
+                <p>Dari setiap matriks GLCM, dihitung enam properti statistik berikut:</p>
+                <div class="formula-box">
+Contrast       = &Sigma; (i-j)&sup2; * P(i,j)
+Dissimilarity  = &Sigma; |i-j| * P(i,j)
+Homogeneity    = &Sigma; P(i,j) / (1 + (i-j)&sup2;)
+Energy         = &radic;ASM
+ASM            = &Sigma; P(i,j)&sup2;
+Correlation    = &Sigma; (i-&mu;i)(j-&mu;j)P(i,j) / (&sigma;i &sigma;j)
+                </div>
+                <p>
+                    Setiap properti dihitung untuk setiap kombinasi jarak dan sudut, menghasilkan
+                    total {{ meta.feature_names|length }} fitur per citra.
+                </p>
+
+                <h2>5. Klasifikasi dengan SVM</h2>
+                <p>
+                    Vektor fitur GLCM dinormalisasi menggunakan <strong>StandardScaler</strong>, kemudian
+                    diklasifikasikan menggunakan <strong>Support Vector Machine (SVM)</strong> dengan
+                    kernel RBF. Model dilatih menggunakan {{ meta.n_train }} citra latih dan diuji dengan
+                    {{ meta.n_test }} citra uji, mencapai akurasi sebesar
+                    <strong>{{ "%.2f"|format(meta.test_accuracy * 100) }}%</strong> pada {{ meta.classes|length }} kelas motif batik.
+                </p>
+
+                <h2>6. Kelas Motif Batik</h2>
+                <ul>
+                    {% for c in meta.classes %}
+                    <li>{{ c.replace('_', ' ') }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
