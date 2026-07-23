@@ -74,11 +74,15 @@
             </div>
             <div class="about-card">
                 <p>
-                    Sistem ini menerapkan metode <strong>Gray Level Co-occurrence Matrix (GLCM)</strong>
-                    untuk mengekstraksi fitur tekstur dari citra digital motif batik nusantara, kemudian
-                    mengklasifikasikannya menggunakan model <strong>Support Vector Machine (SVM)</strong>.
-                    Dataset yang digunakan terdiri dari {{ stats.n_classes }} kelas motif batik dari berbagai
-                    daerah di Indonesia.
+                    Sistem ini menerapkan kombinasi tiga metode ekstraksi fitur citra digital untuk 
+                    menganalisis dan mengklasifikasikan motif batik nusantara, yaitu 
+                    <strong>Gray Level Co-occurrence Matrix (GLCM)</strong> untuk mengekstraksi fitur 
+                    tekstur global, <strong>Local Binary Pattern (LBP)</strong> untuk menangkap pola 
+                    tekstur lokal, dan <strong>Fitur Warna HSV</strong> (Color Histogram &amp; Color Moments) 
+                    untuk mengidentifikasi karakteristik warna khas setiap motif. Ketiga fitur tersebut 
+                    digabungkan dan diklasifikasikan menggunakan model 
+                    <strong>Support Vector Machine (SVM)</strong>. Dataset yang digunakan terdiri dari 
+                    {{ stats.n_classes }} kelas motif batik dari berbagai daerah di Indonesia.
                 </p>
                 <p>
                     Silakan buka menu <strong>Klasifikasi Batik</strong> untuk mengunggah gambar batik dan

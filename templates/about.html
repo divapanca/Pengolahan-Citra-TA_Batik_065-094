@@ -5,7 +5,7 @@
 <div class="header">
     <div class="header-left">
         <h1>Tentang Metode</h1>
-        <p class="header-subtitle">Penjelasan singkat mengenai Gray Level Co-occurrence Matrix (GLCM) dan SVM</p>
+        <p class="header-subtitle">Penjelasan metode ekstraksi fitur GLCM, LBP, Fitur Warna, dan klasifikasi SVM</p>
     </div>
 </div>
 
@@ -13,31 +13,21 @@
     <div class="content-left" style="grid-column: 1 / -1;">
         <div class="card">
             <div class="about-card">
+
                 <h2>1. Gray Level Co-occurrence Matrix (GLCM)</h2>
                 <p>
                     GLCM adalah matriks statistik orde dua yang menggambarkan seberapa sering pasangan
                     nilai keabuan piksel muncul bersama pada jarak <em>d</em> dan sudut &theta; tertentu
-                    dalam sebuah citra. GLCM digunakan untuk mengekstraksi informasi tekstur dari citra,
-                    yang sangat berguna untuk membedakan motif batik dengan pola tekstur berbeda.
+                    dalam sebuah citra. Pada analisis batik, GLCM digunakan untuk mengekstraksi informasi
+                    tekstur global seperti kekasaran, keteraturan, dan pola berulang pada motif kain.
                 </p>
-
-                <h2>2. Tahapan Pra-pemrosesan</h2>
-                <ol>
-                    <li>Citra diubah menjadi <strong>grayscale</strong> (skala keabuan).</li>
-                    <li>Citra di-<em>resize</em> menjadi {{ meta.img_size[0] }}x{{ meta.img_size[1] }} piksel.</li>
-                    <li>Nilai keabuan dikuantisasi menjadi {{ meta.levels }} level untuk mengurangi
-                        kompleksitas komputasi GLCM.</li>
-                </ol>
-
-                <h2>3. Parameter GLCM yang Digunakan</h2>
+                <p><strong>Parameter GLCM yang digunakan:</strong></p>
                 <ul>
                     <li><strong>Jarak (distance):</strong> {{ meta.distances|join(', ') }} piksel</li>
                     <li><strong>Sudut (angle):</strong> 0&deg;, 45&deg;, 90&deg;, 135&deg;</li>
                     <li><strong>Level keabuan:</strong> {{ meta.levels }}</li>
                 </ul>
-
-                <h2>4. Fitur Tekstur (Properti GLCM)</h2>
-                <p>Dari setiap matriks GLCM, dihitung enam properti statistik berikut:</p>
+                <p>Dari setiap matriks GLCM dihitung enam properti statistik:</p>
                 <div class="formula-box">
 Contrast       = &Sigma; (i-j)&sup2; * P(i,j)
 Dissimilarity  = &Sigma; |i-j| * P(i,j)
@@ -46,18 +36,70 @@ Energy         = &radic;ASM
 ASM            = &Sigma; P(i,j)&sup2;
 Correlation    = &Sigma; (i-&mu;i)(j-&mu;j)P(i,j) / (&sigma;i &sigma;j)
                 </div>
-                <p>
-                    Setiap properti dihitung untuk setiap kombinasi jarak dan sudut, menghasilkan
-                    total {{ meta.feature_names|length }} fitur per citra.
-                </p>
 
-                <h2>5. Klasifikasi dengan SVM</h2>
+                <h2>2. Local Binary Pattern (LBP)</h2>
                 <p>
-                    Vektor fitur GLCM dinormalisasi menggunakan <strong>StandardScaler</strong>, kemudian
-                    diklasifikasikan menggunakan <strong>Support Vector Machine (SVM)</strong> dengan
-                    kernel RBF. Model dilatih menggunakan {{ meta.n_train }} citra latih dan diuji dengan
-                    {{ meta.n_test }} citra uji, mencapai akurasi sebesar
-                    <strong>{{ "%.2f"|format(meta.test_accuracy * 100) }}%</strong> pada {{ meta.classes|length }} kelas motif batik.
+                    LBP adalah metode ekstraksi fitur tekstur lokal yang bekerja dengan membandingkan
+                    nilai setiap piksel dengan piksel-piksel tetangganya dalam radius tertentu. Setiap
+                    piksel menghasilkan kode biner: jika nilai tetangga &ge; piksel pusat maka bernilai 1,
+                    jika tidak maka bernilai 0. Kode biner ini dirangkum dalam histogram yang
+                    merepresentasikan pola mikro pada citra batik seperti tepi, sudut, garis, dan
+                    kontur motif.
+                </p>
+                <p><strong>Parameter LBP yang digunakan:</strong></p>
+                <ul>
+                    <li><strong>Radius:</strong> 2 piksel</li>
+                    <li><strong>Jumlah titik tetangga:</strong> 16 titik</li>
+                    <li><strong>Metode:</strong> Uniform (pola seragam)</li>
+                    <li><strong>Jumlah fitur:</strong> 10 fitur histogram</li>
+                </ul>
+
+                <h2>3. Fitur Warna (Color Histogram &amp; Color Moments)</h2>
+                <p>
+                    Fitur warna diekstrak dalam ruang warna <strong>HSV</strong> (Hue, Saturation, Value)
+                    yang lebih sesuai dengan persepsi warna manusia dibanding RGB. Fitur ini sangat
+                    penting untuk membedakan motif batik dari daerah yang berbeda karena setiap daerah
+                    memiliki karakteristik warna khas tersendiri.
+                </p>
+                <p>Dua jenis fitur warna yang digunakan:</p>
+                <ul>
+                    <li>
+                        <strong>Color Histogram</strong> — menghitung distribusi warna per channel
+                        H, S, V menggunakan 8 bin per channel, menghasilkan 24 fitur. Merepresentasikan
+                        "sidik jari warna" dari setiap motif batik.
+                    </li>
+                    <li>
+                        <strong>Color Moments</strong> — merangkum distribusi warna dalam tiga momen
+                        statistik per channel: <em>mean</em> (warna dominan rata-rata),
+                        <em>standar deviasi</em> (variasi warna), dan <em>skewness</em>
+                        (kemiringan distribusi warna), menghasilkan 9 fitur.
+                    </li>
+                </ul>
+
+                <h2>4. Tahapan Pra-pemrosesan Citra</h2>
+                <ol>
+                    <li>Citra dikonversi ke <strong>RGB</strong> untuk ekstraksi fitur warna.</li>
+                    <li>Citra dikonversi ke <strong>Grayscale</strong> untuk ekstraksi GLCM dan LBP.</li>
+                    <li>Citra di-<em>resize</em> menjadi {{ meta.img_size[0] }}x{{ meta.img_size[1] }} piksel.</li>
+                    <li>Nilai keabuan dikuantisasi menjadi {{ meta.levels }} level untuk komputasi GLCM.</li>
+                    <li><strong>Augmentasi data</strong> diterapkan pada data latih (rotasi, flip,
+                        penyesuaian brightness &amp; contrast) untuk memperkaya variasi data.</li>
+                </ol>
+
+                <h2>5. Gabungan Fitur &amp; Klasifikasi SVM</h2>
+                <p>
+                    Ketiga fitur (GLCM, LBP, dan Fitur Warna) digabungkan menjadi satu vektor fitur
+                    per citra, kemudian dinormalisasi menggunakan <strong>StandardScaler</strong>
+                    agar semua fitur berada pada skala yang sama. Selanjutnya vektor fitur
+                    diklasifikasikan menggunakan <strong>Support Vector Machine (SVM)</strong>
+                    dengan kernel RBF dan <em>class_weight balanced</em> untuk menangani
+                    ketidakseimbangan antar kelas.
+                </p>
+                <p>
+                    Model dilatih menggunakan {{ meta.n_train }} citra latih (setelah augmentasi)
+                    dan diuji dengan {{ meta.n_test }} citra uji, mencapai akurasi sebesar
+                    <strong>{{ "%.2f"|format(meta.test_accuracy * 100) }}%</strong>
+                    pada {{ meta.classes|length }} kelas motif batik.
                 </p>
 
                 <h2>6. Kelas Motif Batik</h2>
@@ -66,6 +108,7 @@ Correlation    = &Sigma; (i-&mu;i)(j-&mu;j)P(i,j) / (&sigma;i &sigma;j)
                     <li>{{ c.replace('_', ' ') }}</li>
                     {% endfor %}
                 </ul>
+
             </div>
         </div>
     </div>

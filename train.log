@@ -1,45 +1,34 @@
 === Ekstraksi fitur (GLCM + LBP + Warna) dari data TRAIN (dengan augmentasi) ===
-Jumlah sampel train (setelah augmentasi): 7680, jumlah fitur: 123
-Kelas (20): ['Aceh_Pintu_Aceh', 'Bali_Barong', 'Bali_Merak', 'DKI_Ondel_Ondel', 'Jawa_Barat_Megamendung', 'Jawa_Timur_Pring', 'Kalimantan_Dayak', 'Lampung_Gajah', 'Madura_Mataketeran', 'Maluku_Pala', 'NTB_Lumbung', 'Papua_Asmat', 'Papua_Cendrawasih', 'Papua_Tifa', 'Solo_Parang', 'Sulawesi_Selatan_Lontara', 'Sumatera_Barat_Rumah_Minang', 'Sumatera_Utara_Boraspati', 'Yogyakarta_Kawung', 'Yogyakarta_Parang']
+  Memuat fitur dari cache: D:\semester 6\Pengolahan Citra\website 2\app\model\cache_train.pkl
+Jumlah sampel train (setelah augmentasi): 4608, jumlah fitur: 123
+Kelas (12): ['Bali_Merak', 'Jawa_Barat_Megamendung', 'Kalimantan_Dayak', 'Lampung_Gajah', 'Madura_Mataketeran', 'Maluku_Pala', 'NTB_Lumbung', 'Papua_Asmat', 'Solo_Parang', 'Sumatera_Barat_Rumah_Minang', 'Sumatera_Utara_Boraspati', 'Yogyakarta_Kawung']
 
 === Ekstraksi fitur dari data TEST (tanpa augmentasi) ===
-Jumlah sampel test: 160
+  Memuat fitur dari cache: D:\semester 6\Pengolahan Citra\website 2\app\model\cache_test.pkl
+Jumlah sampel test: 96
 
-=== Grid Search SVM (cv=3) ===
-Fitting 3 folds for each of 12 candidates, totalling 36 fits
+=== Training SVM (tanpa grid search) ===
+C:\Users\perwi\AppData\Local\Programs\Python\Python314\Lib\site-packages\sklearn\svm\_base.py:239: FutureWarning: The `probability` parameter was deprecated in 1.9 and will be removed in version 1.11. Use `CalibratedClassifierCV(SVC(), ensemble=False)` instead of `SVC(probability=True)`
+  warnings.warn(
 
-Parameter terbaik: {'svm__C': 50, 'svm__class_weight': None, 'svm__gamma': 0.01}
-Akurasi CV terbaik: 59.97%
-
-Akurasi pada data TEST: 63.12%
+Akurasi pada data TEST: 81.25%
 
 Classification report:
                              precision    recall  f1-score   support
 
-            Aceh_Pintu_Aceh       0.25      0.25      0.25         8
-                Bali_Barong       0.50      0.50      0.50         8
-                 Bali_Merak       0.67      1.00      0.80         8
-            DKI_Ondel_Ondel       0.44      0.50      0.47         8
-     Jawa_Barat_Megamendung       1.00      0.88      0.93         8
-           Jawa_Timur_Pring       0.60      0.38      0.46         8
-           Kalimantan_Dayak       0.78      0.88      0.82         8
-              Lampung_Gajah       0.86      0.75      0.80         8
-         Madura_Mataketeran       1.00      0.50      0.67         8
-                Maluku_Pala       0.86      0.75      0.80         8
-                NTB_Lumbung       0.58      0.88      0.70         8
-                Papua_Asmat       0.71      0.62      0.67         8
-          Papua_Cendrawasih       0.36      0.50      0.42         8
-                 Papua_Tifa       0.33      0.38      0.35         8
-                Solo_Parang       0.75      0.38      0.50         8
-   Sulawesi_Selatan_Lontara       0.50      0.25      0.33         8
-Sumatera_Barat_Rumah_Minang       0.64      0.88      0.74         8
-   Sumatera_Utara_Boraspati       0.60      0.75      0.67         8
+                 Bali_Merak       0.80      1.00      0.89         8
+     Jawa_Barat_Megamendung       0.88      0.88      0.88         8
+           Kalimantan_Dayak       0.88      0.88      0.88         8
+              Lampung_Gajah       0.67      0.75      0.71         8
+         Madura_Mataketeran       1.00      0.75      0.86         8
+                Maluku_Pala       0.67      0.75      0.71         8
+                NTB_Lumbung       0.89      1.00      0.94         8
+                Papua_Asmat       0.75      0.75      0.75         8
+                Solo_Parang       1.00      0.50      0.67         8
+Sumatera_Barat_Rumah_Minang       0.78      0.88      0.82         8
+   Sumatera_Utara_Boraspati       0.67      0.75      0.71         8
           Yogyakarta_Kawung       1.00      0.88      0.93         8
-          Yogyakarta_Parang       0.67      0.75      0.71         8
 
-                   accuracy                           0.63       160
-                  macro avg       0.66      0.63      0.63       160
-               weighted avg       0.66      0.63      0.63       160
-
-
-Model tersimpan di: /home/claude/work/app/model
+                   accuracy                           0.81        96
+                  macro avg       0.83      0.81      0.81        96
+               weighted avg       0.83      0.81      0.81        96
